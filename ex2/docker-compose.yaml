@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'secret'
+      MYSQL_DATABASE: 'app_db'
+      MYSQL_USER: 'docker'
+      MYSQL_PASSWORD: 'docker'
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+
+  api:
+    image: golang:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./go:/app
+    working_dir: /app
+    depends_on:
+      - db
+    command: [ 'go', 'run', 'main.go' ]
